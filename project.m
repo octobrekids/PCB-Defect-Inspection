@@ -5,34 +5,38 @@ warning off;
 T_template = imread('01.jpg');
 T_input = imread('07.jpg');
 
-tempResize = imresize(T_template, 0.8);
-inputResize = imresize(T_input, 0.8);
+% image resize
+%tempResize = imresize(T_template, 0.8);
+%inputResize = imresize(T_input, 0.8);
+
+% image pyramid
+tempResize = impyramid(T_template, 'reduce');
+inputResize = impyramid(T_input, 'reduce');
 
 tempGray = rgb2gray(tempResize);
 inputGray = rgb2gray(inputResize);
 
-tempGray = imgaussfilt(tempGray,2);
-inputGray = imgaussfilt(inputGray,2);
+preresult = tempGray - inputGray;
+preresult = imbinarize(preresult,0.05);
 
-template = imbinarize(tempGray,0.185);
-input = imbinarize(inputGray,0.185);
+imshow(preresult);
 
+connectCom = bwconncomp(preresult,8);
+L = bwlabel(preresult,8);
 
-preresult = xor(template,input);
+%edited
+%--------------------
 
 
 de = strel('disk',2,0);
 se = strel('line',10,7);
 die = strel('disk',3,0);
-result = imclose(preresult,de);
-result = imopen(result,se);
-
-imshow(result);
+preresult = imclose(preresult,de);
+preresult = imopen(preresult,se);
 
 
-BW = logical(result);
-connectCom = bwconncomp(result,4);
-L = bwlabel(BW,4);
+connectCom = bwconncomp(result,8);
+L = bwlabel(BW,8);
 
 [r, c] = find(L==1);
 rc = [r,c];
@@ -117,18 +121,6 @@ Binv_matone(any(Binv_matone == (0.000000000000000 + 0.000000000000000i), 1)) = [
 for j = 1 : sum(nrows)
     imgtemp(tembMat(j,1),tembMat(j,2)) = Binv_matone(j);
 end
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
