@@ -3,7 +3,7 @@ warning off;
 
 % image acquitise
 T_template = imread('01.jpg');
-T_input = imread('01_mouse_bite_01.jpg');
+T_input = imread('01_missing_hole_05.jpg');
 
 % image pyramid
 tempResize = impyramid(T_template, 'reduce');
@@ -31,17 +31,18 @@ label = cell(nDefect,1);
 
 position = cat(1, STATS(:).BoundingBox);
 
-
 for i = 1 : nDefect
-    if(STATS(i).Circularity >= 1.15)
+    if(STATS(i).Circularity >= 1)
         label(i) = cellstr("Missing Hole");
     else
         label(i) = cellstr("no missing");
     end
 end
 
+position(:,1) = position(:,1) - 5;
+position(:,3) = position(:,3) + 5;
 s = insertObjectAnnotation(inputResize,'rectangle',position,label,...
-    'TextBoxOpacity',0.9,'FontSize',10);
+    'TextBoxOpacity',0.8,'FontSize',10);
 figure
 imshow(s);
 
